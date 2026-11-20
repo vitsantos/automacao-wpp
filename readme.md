@@ -117,3 +117,29 @@ Cada novo contato salvo é registrado imediatamente no arquivo **`contatos_salvo
 4. Captura o nome público (`~Nome`) e formata como `[Nome] Cliente` (ou `Contato Cliente` caso não haja nome público).
 5. Clica no botão exato **`Adicionar`** (ignorando *Adicionar à lista*), preenche `contact-first-name-input`, garante que a chave **`Sincronizar contato com`** esteja marcada e confirma no botão **`save-contact-btn`**.
 6. Registra no CSV e rola a lista suavemente até atingir `LIMITE_POR_EXECUCAO` ou o fim do histórico.
+
+
+
+
+## ⏰ Agendamento Diário no Windows (Opcional)
+
+Caso queira automatizar a execução em segundo plano (recomendado usar o código da branch `feature/agendamento-diario` , registre a tarefa diária no Windows via **PowerShell** (no exemplo abaixo, todos os dias às **19:00**):
+
+```powershell
+$Pasta = "C:\Users\seu-usuario\pasta-do-arquivo\automacao_wpp"
+$PythonVenv = "$Pasta\venv\Scripts\python.exe"
+$Script = "$Pasta\salvar_clientes.py"
+
+$Acao = New-ScheduledTaskAction -Execute $PythonVenv -Argument "`"$Script`"" -WorkingDirectory $Pasta
+$Gatilho = New-ScheduledTaskTrigger -Daily -At 19:00
+$Config = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable
+
+Register-ScheduledTask -TaskName "AutomacaoWhatsAppClientes" -Action $Acao -Trigger $Gatilho -Settings $Config -Description "Salva novos contatos do WhatsApp Web diariamente"
+```
+
+---
+
+## 🌿 Branches e Variações
+
+* **`main`:** Versão principal para execução manual sob demanda (`salvar_clientes.py`), com controle total de ritmo e limite por turno.
+* **`feature/agendamento-diario` (opcional):** Branch alternativa preparada para execução autônoma 1x por dia via Agendador de Tarefas do Windows, sem alterar o comportamento da `main`.
