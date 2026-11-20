@@ -2,4 +2,5 @@ venv/
 __pycache__/
 sessao_wpp_edge/
 contatos_salvos.csv
+execucao_diaria.log
 *.pyc
